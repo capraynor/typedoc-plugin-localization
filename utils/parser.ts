@@ -2,7 +2,10 @@ import { isArray } from "util";
 
 export class Parser {
     public splitByCharacter(text, char) {
-        const res = this.removeEmptyStrings(text.split(char));
+        // when have multiline comments, it will ignore the empty line.
+        // it's diffrent from the specification.
+        //const res = this.removeEmptyStrings(text.split(char));
+        const res = text.split(char);
         if (res.length === 1) {
             return res[0]
         }

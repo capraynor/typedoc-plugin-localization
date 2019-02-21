@@ -1,5 +1,5 @@
 export class Constants {
-    static readonly PROJ_NAME = 'typedoc-plugin-localization';
+    static readonly PROJ_NAME = 'typedoc-plugin-localization2';
 
     /**
      * JSON keys
