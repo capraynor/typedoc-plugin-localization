@@ -1,4 +1,5 @@
-import { AttributeType } from "../enums/json-keys";
+import { getAttributeType } from "../enums/json-keys";
+import { Constants } from "../constants";
 
 export abstract class BaseFactory {
     public name;
@@ -19,13 +20,19 @@ export abstract class BaseFactory {
         }
     }
     
-    public appendAttribute(parentName, kind, attributeName, data) {
+    public appendAttribute(parentName, kind, attributeName, data, isStatic: boolean) {
         if (!data) {
             return;
         }        
-        
-        const attributeKind = AttributeType[kind];
-        this.fileClassContent[parentName][attributeKind][attributeName] = data;
+        const attributeKind = getAttributeType(kind);
+
+        if (isStatic){
+            this.fileClassContent[parentName][attributeKind][Constants.STATIC_ATTRIBUTES_CATETORY_NAME] = this.fileClassContent[parentName][attributeKind][Constants.STATIC_ATTRIBUTES_CATETORY_NAME] || {};
+            this.fileClassContent[parentName][attributeKind][Constants.STATIC_ATTRIBUTES_CATETORY_NAME][attributeName] = data;
+        }else{
+
+            this.fileClassContent[parentName][attributeKind][attributeName] = data;
+        }
 
     }
 
