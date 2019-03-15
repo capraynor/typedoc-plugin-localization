@@ -9,6 +9,7 @@ import { Parser } from '../utils/parser';
 import { Constants } from '../utils/constants';
 import { InterfaceFactory } from '../utils/factories/interface-factory';
 import { FunctionFactory } from '../utils/factories/function-factory';
+import { VariableFactory } from '../utils/factories/variable-factory';
   
 @Component({ name: 'convert-component' })
 export class ConvertComponent extends ConverterComponent {
@@ -146,6 +147,7 @@ export class ConvertComponent extends ConverterComponent {
             case ReflectionKind.Property:
             case ReflectionKind.CallSignature:
             case ReflectionKind.EnumMember:
+            case ReflectionKind.Constructor:
                 /**
                  * Skip reflections with type @ReflectionKind.Function because they are aslo @ReflectionKInd.CallSignature
                  * but the handling process here is not appropriate for them.
@@ -154,8 +156,10 @@ export class ConvertComponent extends ConverterComponent {
                     break;
                 }
 
+
+
                 const getData = this.getCommentInfo(reflection);
-                this.factoryInstance.appendAttribute(this.jsonObjectName, reflection.kind, reflection.name, getData);
+                this.factoryInstance.appendAttribute(this.jsonObjectName, reflection.kind, reflection.name, getData, reflection.flags.isStatic);
                 break;
             case ReflectionKind.Function:
                     const funcData = this.getCommentInfo(reflection.signatures[0]);
@@ -163,6 +167,14 @@ export class ConvertComponent extends ConverterComponent {
                     funcInstance.buildObjectStructure(funcData);
                     if (!funcInstance.isEmpty()) {
                         this.globalFuncsJson = Object.assign(funcInstance.getJsonContent(), this.globalFuncsJson);
+                    }
+                break;
+            case ReflectionKind.Variable: 
+                    const variableData = this.getCommentInfo(reflection);
+                    const variableInstance = this.instanceBuilder(reflection.kind, reflection.name);
+                    variableInstance.buildObjectStructure(variableData);
+                    if (!variableInstance.isEmpty()){
+                        this.globalFuncsJson = Object.assign(variableInstance.getJsonContent(), this.globalFuncsJson);
                     }
                 break;
             case ReflectionKind.GetSignature:
@@ -280,6 +292,8 @@ export class ConvertComponent extends ConverterComponent {
                 return new FunctionFactory(objectName);
             case ReflectionKind.Class:
                 return new ClassFactory(objectName);
+            case ReflectionKind.Variable: 
+                return new VariableFactory(objectName);
             default:
                 null;
         }

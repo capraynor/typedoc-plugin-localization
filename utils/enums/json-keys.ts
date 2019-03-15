@@ -7,5 +7,13 @@ export enum AttributeType {
     functions = ReflectionKind.Function,
     getter = ReflectionKind.GetSignature,
     setter = ReflectionKind.SetSignature,
-    members = ReflectionKind.EnumMember
+    members = ReflectionKind.EnumMember,
+}
+
+export function getAttributeType(reflectionKind: ReflectionKind){
+    if (reflectionKind === ReflectionKind.Constructor){
+        return AttributeType[ReflectionKind.CallSignature];
+    }
+
+    return AttributeType[reflectionKind];
 }

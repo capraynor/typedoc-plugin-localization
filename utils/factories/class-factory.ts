@@ -1,5 +1,6 @@
 import { BaseFactory } from './base-factory';
-import { AttributeType } from '../enums/json-keys';
+import { AttributeType, getAttributeType } from '../enums/json-keys';
+import { ReflectionKind } from 'typedoc/dist/lib/models';
 
 const PROPERTIES_KEY = AttributeType[AttributeType.properties];
 const METHODS_KEY = AttributeType[AttributeType.methods];
@@ -19,13 +20,14 @@ export class ClassFactory extends BaseFactory {
         this.fileClassContent[this.name][ACCESSORS_KEY] = {};
     }
 
-    public appendAccessorAttributes(parentName, kind, accessorName, accessorType, data) {
+    public appendAccessorAttributes(parentName: string, kind: ReflectionKind, accessorName: string, accessorType, data) {
+        debugger;
         if(!data) {
             return;
         }
 
-        const attributeKind = AttributeType[kind];
-        const accesorTypeAsString = AttributeType[accessorType];
+        const attributeKind = getAttributeType(kind);
+        const accesorTypeAsString = getAttributeType(accessorType);
         const isAccessorExists = this.fileClassContent[parentName][attributeKind][accessorName];
         if (!isAccessorExists) {
             this.fileClassContent[parentName][attributeKind][accessorName] = {};

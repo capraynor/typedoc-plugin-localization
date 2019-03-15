@@ -22,6 +22,6 @@ export class Constants {
     static readonly INCLUDE_PARAMS_OPTION = 'params';
     static readonly LOCALIZE_OPTION = 'localize'
     static readonly TEMPLATE_STRINGS_OPTION = 'templateStrings';
-
+    static readonly STATIC_ATTRIBUTES_CATETORY_NAME = "static-properties";
     static readonly GLOBAL_FUNCS_FILE_NAME = 'globalFunctions';
 }

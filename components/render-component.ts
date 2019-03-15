@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Component, RendererComponent } from 'typedoc/dist/lib/output/components';
 import { ReflectionKind } from 'typedoc/dist/lib/models';
 import { FileOperations } from '../utils/file-operations';
-import { AttributeType } from '../utils/enums/json-keys';
+import {  getAttributeType } from '../utils/enums/json-keys';
 import { Constants } from '../utils/constants';
 import { RendererEvent } from 'typedoc/dist/lib/output/events';
 import { Parser } from '../utils/parser';
@@ -77,6 +77,7 @@ export class RenderComponenet extends RendererComponent {
             case ReflectionKind.Property:
             case ReflectionKind.CallSignature:
             case ReflectionKind.EnumMember:
+            case ReflectionKind.Constructor:
                    /**
                      * Skip reflections with type @ReflectionKind.Function because they are aslo @ReflectionKInd.CallSignature
                      * but the handling process here is not appropriate for them.
@@ -88,7 +89,11 @@ export class RenderComponenet extends RendererComponent {
                     const parent = this.getParentBasedOnType(reflection, reflection.kind);
                     const parentName = parent.name;
                     const attributeName = reflection.name;
-                    const attributeData = this.getAttributeData(parentName, AttributeType[reflection.kind], attributeName);
+                    console.log(attributeName);
+                    if (ReflectionKind.Constructor === reflection.kind)
+                    debugger;
+
+                    const attributeData = this.getAttributeData(parentName, getAttributeType(reflection.kind), attributeName, reflection.flags.isStatic);
                     if(attributeData) {
                         this.updateComment(reflection, attributeData);
                     }
@@ -101,12 +106,24 @@ export class RenderComponenet extends RendererComponent {
                     const funcData = this.globalFuncsData[funcName];
                     this.updateComment(reflection.signatures[0], funcData);
                 break;
+            case ReflectionKind.Variable: 
+                if (!this.globalFuncsData) {
+                    break;
+                }
+                const variableName = reflection.name;
+                const variableData = this.globalFuncsData[variableName];
+                this.updateComment(reflection, variableData);
+                break;
             case ReflectionKind.GetSignature:
             case ReflectionKind.SetSignature:
                     const accessorParent = this.getParentBasedOnType(reflection, reflection.kind);
                     const accessor = reflection.parent;
                     const accessorSignature = reflection.kind;
-                    const data = this.getAccessorAttributeData(accessorParent.name, AttributeType[accessor.kind], accessor.name, AttributeType[accessorSignature]);
+                    const data = this.getAccessorAttributeData(accessorParent.name, 
+                                    getAttributeType(accessor.kind), 
+                                    accessor.name, 
+                                    getAttributeType(accessorSignature), 
+                                    reflection.flags.isStatic);
                     if (data) {
                         this.updateComment(reflection, data);
                     }
@@ -122,15 +139,22 @@ export class RenderComponenet extends RendererComponent {
         }
     }
 
-    private getAttributeData(parentName, attribute, attributeName) {
+    private getAttributeData(parentName, attribute, attributeName, isStatic) {
         const data = this.getAttribute(parentName, attribute);
+
         if (data) {
+            if (isStatic){
+                if (data[Constants.STATIC_ATTRIBUTES_CATETORY_NAME]){
+                    return data[Constants.STATIC_ATTRIBUTES_CATETORY_NAME][attributeName];
+                }
+            }
+
             return data[attributeName];
         }
     }
 
-    private getAccessorAttributeData(parentName, attribute, attributeName, accessorType) {
-        const data = this.getAttributeData(parentName, attribute, attributeName);
+    private getAccessorAttributeData(parentName, attribute, attributeName, accessorType, isStatic) {
+        const data = this.getAttributeData(parentName, attribute, attributeName, isStatic);
         if (data) {
             return data[accessorType];
         }
