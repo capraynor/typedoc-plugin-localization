@@ -77,7 +77,7 @@ export class RenderComponenet extends RendererComponent {
             case ReflectionKind.Property:
             case ReflectionKind.CallSignature:
             case ReflectionKind.EnumMember:
-            case ReflectionKind.Constructor:
+            
                    /**
                      * Skip reflections with type @ReflectionKind.Function because they are aslo @ReflectionKInd.CallSignature
                      * but the handling process here is not appropriate for them.
@@ -90,8 +90,7 @@ export class RenderComponenet extends RendererComponent {
                     const parentName = parent.name;
                     const attributeName = reflection.name;
                     console.log(attributeName);
-                    if (ReflectionKind.Constructor === reflection.kind)
-                    debugger;
+                    //if (ReflectionKind.Constructor === reflection.kind)
 
                     const attributeData = this.getAttributeData(parentName, getAttributeType(reflection.kind), attributeName, reflection.flags.isStatic);
                     if(attributeData) {
@@ -116,6 +115,7 @@ export class RenderComponenet extends RendererComponent {
                 break;
             case ReflectionKind.GetSignature:
             case ReflectionKind.SetSignature:
+            case ReflectionKind.ConstructorSignature:
                     const accessorParent = this.getParentBasedOnType(reflection, reflection.kind);
                     const accessor = reflection.parent;
                     const accessorSignature = reflection.kind;
@@ -190,6 +190,7 @@ export class RenderComponenet extends RendererComponent {
                 const paramFromJson = dataObj[Constants.COMMENT][Constants.PARAMS][param.name];
                 if (paramFromJson) {
                     param.comment.text = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].text, '\n');
+                    param.comment.shortText = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].shortText, '\n');
                     return param;
                 }
             });
@@ -203,6 +204,7 @@ export class RenderComponenet extends RendererComponent {
      */
     private getParentBasedOnType(reflection, kind) {
         if (kind === ReflectionKind.CallSignature || 
+            kind === ReflectionKind.ConstructorSignature ||
             kind === ReflectionKind.GetSignature || 
             kind === ReflectionKind.SetSignature) {
                 return reflection.parent.parent;

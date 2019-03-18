@@ -147,7 +147,7 @@ export class ConvertComponent extends ConverterComponent {
             case ReflectionKind.Property:
             case ReflectionKind.CallSignature:
             case ReflectionKind.EnumMember:
-            case ReflectionKind.Constructor:
+           
                 /**
                  * Skip reflections with type @ReflectionKind.Function because they are aslo @ReflectionKInd.CallSignature
                  * but the handling process here is not appropriate for them.
@@ -179,6 +179,7 @@ export class ConvertComponent extends ConverterComponent {
                 break;
             case ReflectionKind.GetSignature:
             case ReflectionKind.SetSignature:
+            case ReflectionKind.ConstructorSignature:
                 const accessorName = reflection.parent.name;
                 const accessorType = reflection.kind;
                 const accessorData = this.getCommentInfo(reflection);

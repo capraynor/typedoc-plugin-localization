@@ -21,7 +21,6 @@ export class ClassFactory extends BaseFactory {
     }
 
     public appendAccessorAttributes(parentName: string, kind: ReflectionKind, accessorName: string, accessorType, data) {
-        debugger;
         if(!data) {
             return;
         }
@@ -29,10 +28,9 @@ export class ClassFactory extends BaseFactory {
         const attributeKind = getAttributeType(kind);
         const accesorTypeAsString = getAttributeType(accessorType);
         const isAccessorExists = this.fileClassContent[parentName][attributeKind][accessorName];
-        if (!isAccessorExists) {
+        if (!isAccessorExists || typeof isAccessorExists == 'function') {
             this.fileClassContent[parentName][attributeKind][accessorName] = {};
         }
-
         this.fileClassContent[parentName][attributeKind][accessorName][accesorTypeAsString] = data;
     }
 
