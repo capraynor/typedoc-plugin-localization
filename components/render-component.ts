@@ -101,16 +101,14 @@ export class RenderComponenet extends RendererComponent {
                     if (!this.globalFuncsData) {
                         break;
                     }
-                    const funcName = reflection.name;
-                    const funcData = this.globalFuncsData[funcName];
+                    const funcData = this.getGlobalComment(reflection);
                     this.updateComment(reflection.signatures[0], funcData);
                 break;
             case ReflectionKind.Variable: 
                 if (!this.globalFuncsData) {
                     break;
                 }
-                const variableName = reflection.name;
-                const variableData = this.globalFuncsData[variableName];
+                const variableData = this.getGlobalComment(reflection);
                 this.updateComment(reflection, variableData);
                 break;
             case ReflectionKind.GetSignature:
@@ -131,6 +129,21 @@ export class RenderComponenet extends RendererComponent {
             default:
                 return;
         }
+    }
+
+    private getGlobalComment(reflection){
+        let ref = reflection;
+        let paths = [];
+        do{
+            paths.unshift(ref.name);
+            ref = ref.parent;
+        }while(ref.kind != ReflectionKind.Global);
+        let p = paths.shift();
+        let storage = this.globalFuncsData[p];
+        while(storage && paths.length){
+            storage = storage[paths.shift()];
+        }
+        return storage;
     }
 
     private getAttribute(parentName, attribute) {

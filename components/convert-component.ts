@@ -166,7 +166,8 @@ export class ConvertComponent extends ConverterComponent {
                     const funcInstance = this.instanceBuilder(reflection.kind, reflection.name);
                     funcInstance.buildObjectStructure(funcData);
                     if (!funcInstance.isEmpty()) {
-                        this.globalFuncsJson = Object.assign(funcInstance.getJsonContent(), this.globalFuncsJson);
+                        let storage = this.prepareStorage(reflection);
+                        Object.assign(storage, funcInstance.getJsonContent());
                     }
                 break;
             case ReflectionKind.Variable: 
@@ -174,7 +175,8 @@ export class ConvertComponent extends ConverterComponent {
                     const variableInstance = this.instanceBuilder(reflection.kind, reflection.name);
                     variableInstance.buildObjectStructure(variableData);
                     if (!variableInstance.isEmpty()){
-                        this.globalFuncsJson = Object.assign(variableInstance.getJsonContent(), this.globalFuncsJson);
+                        let storage = this.prepareStorage(reflection);
+                        Object.assign(storage, variableInstance.getJsonContent());
                     }
                 break;
             case ReflectionKind.GetSignature:
@@ -187,6 +189,23 @@ export class ConvertComponent extends ConverterComponent {
             default:
                 return;
         }
+    }
+
+    private prepareStorage(reflection){
+        let ref = reflection.parent;
+        let paths = [];
+        do{
+            paths.unshift(ref.name);
+            ref = ref.parent;
+        }while(ref.kind != ReflectionKind.Global);
+        let obj = this.globalFuncsJson;
+        paths.forEach(p => {
+            if(!obj[p]){
+                obj[p] = {};
+            }
+            obj = obj[p];
+        });
+        return obj;
     }
 
     /**
