@@ -124,6 +124,12 @@ export class ConvertComponent extends ConverterComponent {
      */
     private resolve(context, reflection) {
         switch(reflection.kind) {
+            case ReflectionKind.ExternalModule:
+            case ReflectionKind.Module:
+                const moduleData = this.getCommentInfo(reflection);
+                let storage = this.prepareStorage(reflection);
+                Object.assign(storage, moduleData);
+            break;
             case ReflectionKind.Enum:
             case ReflectionKind.Class:
             case ReflectionKind.Interface:
@@ -192,12 +198,16 @@ export class ConvertComponent extends ConverterComponent {
     }
 
     private prepareStorage(reflection){
-        let ref = reflection.parent;
         let paths = [];
-        do{
-            paths.unshift(ref.name);
-            ref = ref.parent;
-        }while(ref.kind != ReflectionKind.Global);
+        if (reflection.kind === ReflectionKind.Module || reflection.kind === ReflectionKind.ExternalModule){
+            paths.unshift(reflection.name);
+        }else{
+            let ref = reflection.parent;
+            do{
+                paths.unshift(ref.name);
+                ref = ref.parent;
+            }while(ref.kind != ReflectionKind.Global);
+        }      
         let obj = this.globalFuncsJson;
         paths.forEach(p => {
             if(!obj[p]){

@@ -60,6 +60,14 @@ export class RenderComponenet extends RendererComponent {
 
     private processTheReflection(reflection) {
         switch(reflection.kind) {
+            case ReflectionKind.ExternalModule:
+            case ReflectionKind.Module:
+                if (!this.globalFuncsData) {
+                    break;
+                }
+                let moduleData = this.getGlobalComment(reflection) || {};
+                this.updateComment(reflection, moduleData);
+                break;
             case ReflectionKind.Class:
             case ReflectionKind.Enum:
             case ReflectionKind.Interface:
