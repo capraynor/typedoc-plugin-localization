@@ -8,7 +8,8 @@ export enum AttributeType {
     getter = ReflectionKind.GetSignature,
     setter = ReflectionKind.SetSignature,
     members = ReflectionKind.EnumMember,
-    constructorSignature = ReflectionKind.ConstructorSignature
+    constructorSignature = ReflectionKind.ConstructorSignature,
+    events = ReflectionKind.Event
 }
 
 export function getAttributeType(reflectionKind: ReflectionKind){

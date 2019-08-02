@@ -85,7 +85,7 @@ export class RenderComponenet extends RendererComponent {
             case ReflectionKind.Property:
             case ReflectionKind.CallSignature:
             case ReflectionKind.EnumMember:
-            
+            case ReflectionKind.Event:
                    /**
                      * Skip reflections with type @ReflectionKind.Function because they are aslo @ReflectionKInd.CallSignature
                      * but the handling process here is not appropriate for them.
