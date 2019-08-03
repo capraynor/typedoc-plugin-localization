@@ -21,5 +21,9 @@ export function getAttributeType(reflectionKind: ReflectionKind){
         return AttributeType[ReflectionKind.ConstructorSignature];
     }
 
+    if(reflectionKind === ReflectionKind.Event){
+        return AttributeType[ReflectionKind.Property];
+    }
+
     return AttributeType[reflectionKind];
 }
