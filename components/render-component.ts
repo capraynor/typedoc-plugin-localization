@@ -1,12 +1,13 @@
 import * as path from 'path';
 
 import { Component, RendererComponent } from 'typedoc/dist/lib/output/components';
-import { ReflectionKind } from 'typedoc/dist/lib/models';
+import { ReflectionKind, ReflectionType } from 'typedoc/dist/lib/models';
 import { FileOperations } from '../utils/file-operations';
 import {  getAttributeType } from '../utils/enums/json-keys';
 import { Constants } from '../utils/constants';
 import { RendererEvent } from 'typedoc/dist/lib/output/events';
 import { Parser } from '../utils/parser';
+import { GlobalFuncs } from '../utils/global-funcs';
 
 @Component({ name: 'render-component'})
 export class RenderComponenet extends RendererComponent {
@@ -71,6 +72,7 @@ export class RenderComponenet extends RendererComponent {
             case ReflectionKind.Class:
             case ReflectionKind.Enum:
             case ReflectionKind.Interface:
+            case ReflectionKind.TypeAlias:
                     const filePath = reflection.sources[0].fileName;
                     let processedDir = this.mainDirOfJsons;
                     const parsedPath = this.fileOperations.getProcessedDir(filePath);
@@ -97,8 +99,6 @@ export class RenderComponenet extends RendererComponent {
                     const parent = this.getParentBasedOnType(reflection, reflection.kind);
                     const parentName = parent.name;
                     const attributeName = reflection.name;
-                    console.log(attributeName);
-                    //if (ReflectionKind.Constructor === reflection.kind)
 
                     const attributeData = this.getAttributeData(parentName, getAttributeType(reflection.kind), attributeName, reflection.flags.isStatic);
                     if(attributeData) {
@@ -114,6 +114,10 @@ export class RenderComponenet extends RendererComponent {
                 break;
             case ReflectionKind.Variable: 
                 if (!this.globalFuncsData) {
+                    break;
+                }
+
+                if (GlobalFuncs.isTypeLiteralVariable(reflection)){
                     break;
                 }
                 const variableData = this.getGlobalComment(reflection);
@@ -223,6 +227,23 @@ export class RenderComponenet extends RendererComponent {
                 }
             });
         }
+
+        if (GlobalFuncs.isSupportedTypeAliasReflection(reflection)){
+            this.updateTypeLiteralComment(reflection, dataObj)
+        }
+    }
+
+    private updateTypeLiteralComment(reflection, dataObj){
+
+        let reflectionType = reflection.type as ReflectionType;
+        reflectionType.declaration.children.forEach((c) => {
+            let commentObj = dataObj.properties[c.name] || {
+                comment:{}
+            };
+            c.comment.shortText = commentObj.comment.shortText || c.comment.shortText;
+            c.comment.text = commentObj.comment.text || c.comment.text ;
+            
+        });
     }
 
     /**

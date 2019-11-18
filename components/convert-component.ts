@@ -1,6 +1,6 @@
 import { Component, ConverterComponent } from 'typedoc/dist/lib/converter/components';
 import { Converter } from 'typedoc/dist/lib/converter';
-import { ReflectionKind } from 'typedoc/dist/lib/models';
+import { ReflectionKind, DeclarationReflection, ReflectionType } from 'typedoc/dist/lib/models';
 import { FileOperations } from '../utils/file-operations';
 import { ClassFactory } from '../utils/factories/class-factory';
 import { BaseFactory } from '../utils/factories/base-factory';
@@ -10,6 +10,11 @@ import { Constants } from '../utils/constants';
 import { InterfaceFactory } from '../utils/factories/interface-factory';
 import { FunctionFactory } from '../utils/factories/function-factory';
 import { VariableFactory } from '../utils/factories/variable-factory';
+import { TypeAliasFactory } from '../utils/factories/typealias-factory';
+import { AttributeType } from '../utils/enums/json-keys';
+import { GlobalFuncs } from '../utils/global-funcs';
+
+const PROPERTIES_KEY = AttributeType[AttributeType.properties];
   
 @Component({ name: 'convert-component' })
 export class ConvertComponent extends ConverterComponent {
@@ -133,6 +138,7 @@ export class ConvertComponent extends ConverterComponent {
             case ReflectionKind.Enum:
             case ReflectionKind.Class:
             case ReflectionKind.Interface:
+            case ReflectionKind.TypeAlias: 
                 /**
                  * Writes file content when the resolve process for to Object ends 
                  * per(Class, Enum, Interface).
@@ -177,6 +183,10 @@ export class ConvertComponent extends ConverterComponent {
                     }
                 break;
             case ReflectionKind.Variable: 
+
+                    if (GlobalFuncs.isTypeLiteralVariable(reflection)){
+                        break;
+                    }
                     const variableData = this.getCommentInfo(reflection);
                     const variableInstance = this.instanceBuilder(reflection.kind, reflection.name);
                     variableInstance.buildObjectStructure(variableData);
@@ -238,6 +248,32 @@ export class ConvertComponent extends ConverterComponent {
             comment[Constants.COMMENT] = Object.assign(this.getParamsComments(reflection), comment[Constants.COMMENT]);
         }
 
+
+
+        /**
+         * Raynor Chen @ Nov.15 2019
+         * 
+         * We ONLY support:
+         * Comments for type alias itself 
+         * Comments for the properties in type alias = type literal
+         * 
+         * ESPECIALLY NOT SUPPORT: 
+         * The comments for the parameters in type alias => ()=>string
+         * Tags in literal property comments. 
+         */
+        if (reflection.kind === ReflectionKind.TypeAlias && reflection.type){
+
+            if (!comment[PROPERTIES_KEY]){
+                comment[PROPERTIES_KEY] = {};
+            }
+
+
+            comment[PROPERTIES_KEY] ={
+                ...comment[PROPERTIES_KEY],
+                ...this.getTypeAliasPropertiesComments(reflection)[PROPERTIES_KEY]
+            };
+        }
+
         return comment;
     }
 
@@ -263,6 +299,29 @@ export class ConvertComponent extends ConverterComponent {
         return Object.keys(params[Constants.PARAMS]).length ? params : {};
     }
 
+
+    
+    private getTypeAliasPropertiesComments(reflection: DeclarationReflection){
+        let result = {};
+        let properties = {}
+        result[PROPERTIES_KEY] = properties;
+
+
+        if (!GlobalFuncs.isSupportedTypeAliasReflection(reflection)){
+            return result
+        }
+
+        let reflectionType = reflection.type as ReflectionType;
+
+        reflectionType.declaration.children.forEach((c) => {
+            if (c.hasComment()){
+                properties[c.name] = this.getCommentData(c.comment);
+            }
+            
+        });
+
+        return result;
+    }
     /**
      * Returns all tags per comment.
      * @param comment 
@@ -324,6 +383,8 @@ export class ConvertComponent extends ConverterComponent {
                 return new ClassFactory(objectName);
             case ReflectionKind.Variable: 
                 return new VariableFactory(objectName);
+            case ReflectionKind.TypeAlias:
+                return new TypeAliasFactory(objectName)
             default:
                 null;
         }
