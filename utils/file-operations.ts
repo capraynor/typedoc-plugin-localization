@@ -2,6 +2,17 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import { Logger } from 'typedoc/dist/lib/utils/loggers';
 
+interface ClassFileMapping{
+    [key: string]: {
+        [key:string]: {
+            tsFilePath: string,
+            notified: boolean
+        }
+    }
+}
+
+let classFileMapping = {} as ClassFileMapping;
+
 export class FileOperations {
 
     public logger;
@@ -103,14 +114,49 @@ export class FileOperations {
         }
 
         return path.join(fileStructureDir, componentDir);
+        //return path.join(path.dirname(filePath),  path.basename(filePath, ".d.ts"))
     }
 
     public appendFileData(mainDir, filePath, fileName, extension, data) {
         let path = this.constructFilePath(mainDir, filePath);
 
+
+        this.checkDuplicatedSymbolName(path, fileName, filePath);
+
         const currentFileFd = this.openFileSync(path, `${fileName}.${extension}`);
         fs.writeSync(currentFileFd, JSON.stringify(data, null, 4), null, 'utf8');
         this.closeFileSync(currentFileFd);
+    }
+
+    private checkDuplicatedSymbolName(jsonDir: string, jsonFileName: string, filePath: string) {
+        if (jsonFileName === "globalFunctions"){
+            return;
+        }
+
+        if (!filePath){
+            return;
+        }
+
+        filePath = path.resolve(filePath);
+
+        try{
+            classFileMapping[jsonDir] = classFileMapping[jsonDir] || {};
+            if (classFileMapping[jsonDir][jsonFileName]) {
+                console.warn(`Typedoc Localization Duplicated Symbol Name: ${jsonFileName} in "${filePath}"`);
+                if (!classFileMapping[jsonDir][jsonFileName].notified) {
+                    console.warn(`Typedoc Localization Duplicated Symbol Name: ${jsonFileName} in "${classFileMapping[jsonDir][jsonFileName].tsFilePath}"`);
+                }
+            }
+            else {
+                classFileMapping[jsonDir][jsonFileName] = {
+                    tsFilePath: filePath,
+                    notified: false
+                };
+            }
+        }catch(e){
+            console.warn("Error when checking duplication of json files.")
+            console.warn(e);
+        }
     }
 
     public createFile(mainDir, filePath,  fileName, fileExtension) {
