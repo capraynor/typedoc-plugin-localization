@@ -235,14 +235,25 @@ export class RenderComponenet extends RendererComponent {
 
     private updateTypeLiteralComment(reflection, dataObj){
 
+                
+        if (!reflection){
+            return;
+        }
+        if (!reflection.comment || !dataObj[Constants.COMMENT]) {
+            return;
+        }
+
+
         let reflectionType = reflection.type as ReflectionType;
         reflectionType.declaration.children.forEach((c) => {
-            let commentObj = dataObj.properties[c.name] || {
-                comment:{}
-            };
-            c.comment.shortText = commentObj.comment.shortText || c.comment.shortText;
-            c.comment.text = commentObj.comment.text || c.comment.text ;
-            
+            let commentObj = dataObj.properties[c.name];
+
+            if (!c.comment || !commentObj || !commentObj.comment){
+                return;
+            }
+
+            c.comment.shortText = commentObj.comment.shortText || c.comment.shortText || "";
+            c.comment.text = commentObj.comment.text || c.comment.text || "";
         });
     }
 
