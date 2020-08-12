@@ -228,7 +228,7 @@ export class RenderComponenet extends RendererComponent {
                 if (paramFromJson) {
                     param.comment.text = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].text, '\n');
                     param.comment.shortText = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].shortText, '\n');
-                    param.comment.returns = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].returns, '\n');
+                    param.comment.returns = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].return, '\n');
                     return param;
                 }
             });
@@ -259,7 +259,7 @@ export class RenderComponenet extends RendererComponent {
             }
 
             c.comment.shortText = commentObj.comment.shortText || c.comment.shortText || "";
-            c.comment.returns = commentObj.comment.returns || c.comment.returns || "";
+            c.comment.returns = commentObj.comment.return || c.comment.returns || "";
             c.comment.text = commentObj.comment.text || c.comment.text || "";
         });
     }

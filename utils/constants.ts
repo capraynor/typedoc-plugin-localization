@@ -10,7 +10,7 @@ export class Constants {
     static readonly COMMENT = 'comment';
     static readonly TEXT = 'text';
     static readonly SHORT_TEXT = 'shortText';
-    static readonly RETURN = 'returns';
+    static readonly RETURN = 'return';
 
     /**
      * Options
