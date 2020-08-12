@@ -363,6 +363,10 @@ export class ConvertComponent extends ConverterComponent {
             comment[Constants.COMMENT][Constants.TAG_NAME] = obj.tagName;
         }
 
+        if(obj.returns) {
+            comment[Constants.COMMENT][Constants.RETURN] = obj.returns;
+        }
+
         return comment;
     }
 
