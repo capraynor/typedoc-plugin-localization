@@ -1,6 +1,6 @@
 {
     "name": "typedoc-plugin-localization2",
-    "version": "1.0.25",
+    "version": "1.0.26",
     "description": "Typedoc plugin which localize your documentation",
     "author": "Infragistics",
     "license": "MIT",
