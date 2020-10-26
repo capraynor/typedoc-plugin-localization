@@ -206,7 +206,6 @@ export class RenderComponenet extends RendererComponent {
             parsed = this.parser.joinByCharacter(dataObj[Constants.COMMENT][Constants.SHORT_TEXT], '\n');
             reflection.comment.shortText = parsed;
         }
-
         if (reflection.comment.returns) {
             parsed = this.parser.joinByCharacter(dataObj[Constants.COMMENT][Constants.RETURN], '\n');
             reflection.comment.returns = parsed;
@@ -227,7 +226,7 @@ export class RenderComponenet extends RendererComponent {
                 if (paramFromJson) {
                     param.comment.text = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].text, '\n');
                     param.comment.shortText = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].shortText, '\n');
-                    param.comment.returns = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].return, '\n');
+                    param.comment.return = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].return, '\n');
                     return param;
                 }
             });

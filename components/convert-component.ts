@@ -11,6 +11,7 @@ import { InterfaceFactory } from '../utils/factories/interface-factory';
 import { FunctionFactory } from '../utils/factories/function-factory';
 import { VariableFactory } from '../utils/factories/variable-factory';
 import { TypeAliasFactory } from '../utils/factories/typealias-factory';
+import { TypeLiteralFactory } from '../utils/factories/typeliteral-factory';
 import { AttributeType } from '../utils/enums/json-keys';
 import { GlobalFuncs } from '../utils/global-funcs';
 
@@ -138,6 +139,7 @@ export class ConvertComponent extends ConverterComponent {
             case ReflectionKind.Class:
             case ReflectionKind.Interface:
             case ReflectionKind.TypeAlias: 
+            case ReflectionKind.TypeLiteral:
                 /**
                  * Writes file content when the resolve process for to Object ends 
                  * per(Class, Enum, Interface).
@@ -148,7 +150,6 @@ export class ConvertComponent extends ConverterComponent {
                         this.fileOperations.appendFileData(this.mainDirToExport, filePath, this.jsonObjectName, 'json', this.factoryInstance.getJsonContent());
                     }
                 }
-
                 const data = this.getCommentInfo(reflection);
                 this.jsonObjectName = reflection.name;
                 this.reflection = reflection;
@@ -232,6 +233,9 @@ export class ConvertComponent extends ConverterComponent {
      * @param reflection 
      */
     private getCommentInfo(reflection) {
+        if(reflection.kind === ReflectionKind.TypeLiteral) {
+            debugger
+        }
         const options = this.application.options.getRawValues();
         if (!reflection.comment) {
             return;
@@ -361,11 +365,9 @@ export class ConvertComponent extends ConverterComponent {
         if(obj.tagName) {
             comment[Constants.COMMENT][Constants.TAG_NAME] = obj.tagName;
         }
-
-        if(obj.returns && obj.returns.trim().length) {
+        if(obj.returns) {
             comment[Constants.COMMENT][Constants.RETURN] = obj.returns;
         }
-
         return comment;
     }
 
@@ -387,7 +389,9 @@ export class ConvertComponent extends ConverterComponent {
             case ReflectionKind.Variable: 
                 return new VariableFactory(objectName);
             case ReflectionKind.TypeAlias:
-                return new TypeAliasFactory(objectName)
+                return new TypeAliasFactory(objectName);
+            case ReflectionKind.TypeLiteral:
+                return new TypeLiteralFactory(objectName);
             default:
                 null;
         }
