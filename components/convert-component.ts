@@ -129,7 +129,6 @@ export class ConvertComponent extends ConverterComponent {
      */
     private resolve(context, reflection) {
         switch(reflection.kind) {
-            case ReflectionKind.ExternalModule:
             case ReflectionKind.Module:
                 const moduleData = this.getCommentInfo(reflection);
                 let storage = this.prepareStorage(reflection);
@@ -209,7 +208,7 @@ export class ConvertComponent extends ConverterComponent {
 
     private prepareStorage(reflection){
         let paths = [];
-        if (reflection.kind === ReflectionKind.Module || reflection.kind === ReflectionKind.ExternalModule){
+        if (reflection.kind === ReflectionKind.Module){
             paths.unshift(reflection.name);
         }else{
             let ref = reflection.parent;

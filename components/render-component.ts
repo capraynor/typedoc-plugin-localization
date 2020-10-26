@@ -61,7 +61,6 @@ export class RenderComponenet extends RendererComponent {
 
     private processTheReflection(reflection) {
         switch(reflection.kind) {
-            case ReflectionKind.ExternalModule:
             case ReflectionKind.Module:
                 if (!this.globalFuncsData) {
                     break;
