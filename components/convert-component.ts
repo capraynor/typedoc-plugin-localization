@@ -233,9 +233,6 @@ export class ConvertComponent extends ConverterComponent {
      * @param reflection 
      */
     private getCommentInfo(reflection) {
-        if(reflection.kind === ReflectionKind.TypeLiteral) {
-            debugger
-        }
         const options = this.application.options.getRawValues();
         if (!reflection.comment) {
             return;
@@ -365,7 +362,7 @@ export class ConvertComponent extends ConverterComponent {
         if(obj.tagName) {
             comment[Constants.COMMENT][Constants.TAG_NAME] = obj.tagName;
         }
-        if(obj.returns) {
+        if(obj.returns && obj.returns.trim().length) {
             comment[Constants.COMMENT][Constants.RETURN] = obj.returns;
         }
         return comment;
