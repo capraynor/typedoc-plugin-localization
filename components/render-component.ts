@@ -206,6 +206,7 @@ export class RenderComponenet extends RendererComponent {
             parsed = this.parser.joinByCharacter(dataObj[Constants.COMMENT][Constants.SHORT_TEXT], '\n');
             reflection.comment.shortText = parsed;
         }
+
         if (reflection.comment.returns) {
             parsed = this.parser.joinByCharacter(dataObj[Constants.COMMENT][Constants.RETURN], '\n');
             reflection.comment.returns = parsed;
