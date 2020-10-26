@@ -226,7 +226,7 @@ export class RenderComponenet extends RendererComponent {
                 if (paramFromJson) {
                     param.comment.text = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].text, '\n');
                     param.comment.shortText = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].shortText, '\n');
-                    param.comment.return = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].return, '\n');
+                    param.comment.returns = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].return, '\n');
                     return param;
                 }
             });
