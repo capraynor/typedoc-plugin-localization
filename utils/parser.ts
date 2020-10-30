@@ -1,5 +1,3 @@
-import { isArray } from "util";
-
 export class Parser {
     public splitByCharacter(text, char) {
         // when have multiline comments, it will ignore the empty line.
@@ -14,7 +12,7 @@ export class Parser {
     }
 
     public joinByCharacter(obj, char) {
-        if (!isArray(obj)) {
+        if (!Array.isArray(obj)) {
             return obj;
         }
 

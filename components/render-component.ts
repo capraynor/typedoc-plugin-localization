@@ -260,6 +260,9 @@ export class RenderComponenet extends RendererComponent {
             c.comment.shortText = commentObj.comment.shortText || c.comment.shortText || "";
             c.comment.returns = commentObj.comment.return || c.comment.returns || "";
             c.comment.text = commentObj.comment.text || c.comment.text || "";
+            c.comment.shortText = this.parser.joinByCharacter(c.comment.shortText, '\n');
+            c.comment.returns = this.parser.joinByCharacter(c.comment.returns, '\n');
+            c.comment.text = this.parser.joinByCharacter(c.comment.text, '\n');
         });
     }
 
