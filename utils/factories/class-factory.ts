@@ -38,7 +38,6 @@ export class ClassFactory extends BaseFactory {
         if(!data) {
             return;
         }
-        debugger;
         const isCurrentExists = this.fileClassContent[parentName]["methods"][accessorName];
         if (!isCurrentExists) {
             this.fileClassContent[parentName]["methods"][accessorName] = {};
