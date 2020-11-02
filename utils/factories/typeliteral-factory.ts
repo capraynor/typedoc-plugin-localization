@@ -27,4 +27,6 @@ export class TypeLiteralFactory extends BaseFactory {
         !Object.keys(this.fileClassContent[this.name][METHODS_KEY]).length;
     }
     public appendAccessorAttributes(parentName: any, kind: any, accessorName: any, accessorType: any, data: any) { }
+    public appendMethodParameterAttributes(parentName: any, kind: any, accessorName: any, accessorType: any, data: any, currentItemName: any) { }
+    public appendConstructorParameterAttributes(parentName: any, kind: any, accessorName: any, accessorType: any, data: any) { }
 }

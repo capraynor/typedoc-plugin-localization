@@ -195,6 +195,18 @@ export class ConvertComponent extends ConverterComponent {
                         Object.assign(storage, variableInstance.getJsonContent());
                     }
                 break;
+            case ReflectionKind.Parameter:
+                if(reflection.parent.kind === ReflectionKind.ConstructorSignature) {
+                    const data = this.getCommentInfo(reflection);
+                    this.factoryInstance.appendConstructorParameterAttributes(this.jsonObjectName, reflection.parent.kind, reflection.name, reflection.type, data);
+                }
+                if(reflection.parent.kind === ReflectionKind.CallSignature) {
+                    const accessorName = reflection.parent.name;
+                    const accessorType = reflection.parent.kind;
+                    const accessorData = this.getCommentInfo(reflection);
+                    this.factoryInstance.appendMethodParameterAttributes(this.jsonObjectName, reflection.parent.kind, accessorName, accessorType, accessorData, reflection.name);
+                }
+                break;
             case ReflectionKind.GetSignature:
             case ReflectionKind.SetSignature:
             case ReflectionKind.ConstructorSignature:

@@ -4,6 +4,8 @@ import { BaseFactory } from "./base-factory";
 const ENUM_MEMBER_KEY = AttributeType[AttributeType.members];
 
 export class EnumFactory extends BaseFactory {
+    public appendConstructorParameterAttributes(parentName: any, kind: any, accessorName: any, accessorType: any, data: any) { }
+    public appendMethodParameterAttributes(parentName: any, kind: any, accessorName: any, accessorType: any, data: any, currentItemName: any) { }
     
     constructor(name: string) {
         super(name);

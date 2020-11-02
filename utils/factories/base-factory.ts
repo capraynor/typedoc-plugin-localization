@@ -39,6 +39,10 @@ export abstract class BaseFactory {
     
     public abstract appendAccessorAttributes(parentName, kind, accessorName, accessorType, data);
 
+    public abstract appendMethodParameterAttributes(parentName, kind, accessorName, accessorType, data, currentItemName);
+
+    public abstract appendConstructorParameterAttributes(parentName, kind, accessorName, accessorType, data);
+
     public isEmpty() {
         return !this.fileClassContent[this.name]['comment'];
     }

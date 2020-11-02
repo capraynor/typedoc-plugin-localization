@@ -125,17 +125,17 @@ export class RenderComponenet extends RendererComponent {
             case ReflectionKind.GetSignature:
             case ReflectionKind.SetSignature:
             case ReflectionKind.ConstructorSignature:
-                    const accessorParent = this.getParentBasedOnType(reflection, reflection.kind);
-                    const accessor = reflection.parent;
-                    const accessorSignature = reflection.kind;
-                    const data = this.getAccessorAttributeData(accessorParent.name, 
-                                    getAttributeType(accessor.kind), 
-                                    accessor.name, 
-                                    getAttributeType(accessorSignature), 
-                                    reflection.flags.isStatic);
-                    if (data) {
-                        this.updateComment(reflection, data);
-                    }
+                const accessorParent = this.getParentBasedOnType(reflection, reflection.kind);
+                const accessor = reflection.parent;
+                const accessorSignature = reflection.kind;
+                const data = this.getAccessorAttributeData(accessorParent.name, 
+                                getAttributeType(accessor.kind), 
+                                accessor.name, 
+                                getAttributeType(accessorSignature), 
+                                reflection.flags.isStatic);
+                if (data) {
+                    this.updateComment(reflection, data);
+                }
                 break;
             default:
                 return;
@@ -224,6 +224,18 @@ export class RenderComponenet extends RendererComponent {
         if (reflection.parameters && dataObj[Constants.COMMENT][Constants.PARAMS]) {
             reflection.parameters.forEach(param => {
                 const paramFromJson = dataObj[Constants.COMMENT][Constants.PARAMS][param.name];
+                if (paramFromJson) {
+                    param.comment.text = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].text, '\n');
+                    param.comment.shortText = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].shortText, '\n');
+                    param.comment.returns = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].return, '\n');
+                    return param;
+                }
+            });
+        }
+
+        if (reflection.parameters && dataObj[Constants.PARAMS]) {
+            reflection.parameters.forEach(param => {
+                const paramFromJson = dataObj[Constants.PARAMS][param.name];
                 if (paramFromJson) {
                     param.comment.text = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].text, '\n');
                     param.comment.shortText = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].shortText, '\n');
