@@ -23,10 +23,20 @@ export class ConvertComponent extends ConverterComponent {
      * Contains current name per every Class, Interface, Enum.
      */
     jsonObjectName: string;
+    __debug: boolean;
     /**
      * Contains current Object instance.
      */
-    factoryInstance: BaseFactory;
+    private _factoryInstance: BaseFactory;
+    public get factoryInstance(): BaseFactory {
+        return this._factoryInstance;
+    }
+    public set factoryInstance(value: BaseFactory) {
+        if(this.__debug) {
+            debugger;
+        }
+        this._factoryInstance = value;
+    }
     fileOperations: FileOperations;
     /**
      * Current @Reflection instance.
@@ -129,6 +139,9 @@ export class ConvertComponent extends ConverterComponent {
      * @param reflection 
      */
     private resolve(context, reflection) {
+        if(reflection.name === 'fork') {
+            debugger;
+        }
         switch(reflection.kind) {
             case ReflectionKind.Module:
                 const moduleData = this.getCommentInfo(reflection);
@@ -140,6 +153,9 @@ export class ConvertComponent extends ConverterComponent {
             case ReflectionKind.Interface:
             case ReflectionKind.TypeAlias: 
             case ReflectionKind.TypeLiteral:
+                if(reflection.name === 'result') {
+                    this.__debug = true;
+                }
                 /**
                  * Writes file content when the resolve process for to Object ends 
                  * per(Class, Enum, Interface).
@@ -159,6 +175,7 @@ export class ConvertComponent extends ConverterComponent {
             case ReflectionKind.Property:
             case ReflectionKind.CallSignature:
             case ReflectionKind.EnumMember:
+            case ReflectionKind.Method:
            
                 /**
                  * Skip reflections with type @ReflectionKind.Function because they are aslo @ReflectionKInd.CallSignature
@@ -195,6 +212,20 @@ export class ConvertComponent extends ConverterComponent {
                         Object.assign(storage, variableInstance.getJsonContent());
                     }
                 break;
+            case ReflectionKind.Parameter:
+                if(reflection.parent.kind === ReflectionKind.ConstructorSignature) {
+                    const data = this.getCommentInfo(reflection);
+                    this.factoryInstance.appendAccessorAttributes(this.jsonObjectName, reflection.parent.kind, reflection.name, reflection.type, data);
+                }
+                if(reflection.parent.kind === ReflectionKind.CallSignature) {
+                    const accessorName = reflection.parent.name;
+                    const accessorType = reflection.parent.kind;
+                    const accessorData = this.getCommentInfo(reflection);
+                    const accessorDataWithName = {"name":reflection.name,"data":accessorData};
+                    this.factoryInstance.appendAccessorAttributes(this.jsonObjectName, reflection.parent.kind, accessorName, accessorType, accessorDataWithName);
+                }
+                break;
+            case ReflectionKind.Accessor:
             case ReflectionKind.GetSignature:
             case ReflectionKind.SetSignature:
             case ReflectionKind.ConstructorSignature:

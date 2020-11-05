@@ -30,7 +30,7 @@ export abstract class BaseFactory {
             this.fileClassContent[parentName][attributeKind][Constants.STATIC_ATTRIBUTES_CATETORY_NAME] = this.fileClassContent[parentName][attributeKind][Constants.STATIC_ATTRIBUTES_CATETORY_NAME] || {};
             this.fileClassContent[parentName][attributeKind][Constants.STATIC_ATTRIBUTES_CATETORY_NAME][attributeName] = data;
         }else{
-
+            this.fileClassContent[parentName][attributeKind] = this.fileClassContent[parentName][attributeKind] || {};
             this.fileClassContent[parentName][attributeKind][attributeName] = data;
         }
 
