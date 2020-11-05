@@ -9,6 +9,4 @@ export class FunctionFactory extends BaseFactory {
     public appendAttribute(parentName, kind, attributeName, data) { }
 
     public appendAccessorAttributes(parentName: any, kind: any, accessorName: any, accessorType: any, data: any) { }
-    public appendMethodParameterAttributes(parentName: any, kind: any, accessorName: any, accessorType: any, data: any, currentItemName: any) { }
-    public appendConstructorParameterAttributes(parentName: any, kind: any, accessorName: any, accessorType: any, data: any) { }
 }

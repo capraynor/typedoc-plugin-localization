@@ -24,20 +24,25 @@ export class ClassFactory extends BaseFactory {
         if(!data) {
             return;
         }
-
         const attributeKind = getAttributeType(kind);
-        const accesorTypeAsString = getAttributeType(accessorType);
+        const accessorTypeAsString = getAttributeType(accessorType);
+        if(attributeKind === 'constructorSignature') {
+            this.appendConstructorParameterAttributes(parentName,kind,accessorName,accessorType,data);
+            return;
+        }
+        if(data['name'] && attributeKind === 'methods') {
+            this.appendMethodParameterAttributes(parentName,kind,accessorName,accessorType,data);
+            return;
+        }
+        this.fileClassContent[parentName][attributeKind] = this.fileClassContent[parentName][attributeKind] || {};
         const isAccessorExists = this.fileClassContent[parentName][attributeKind][accessorName];
         if (!isAccessorExists || typeof isAccessorExists == 'function') {
             this.fileClassContent[parentName][attributeKind][accessorName] = {};
         }
-        this.fileClassContent[parentName][attributeKind][accessorName][accesorTypeAsString] = data;
+        this.fileClassContent[parentName][attributeKind][accessorName][accessorTypeAsString] = data;
     }
 
-    public appendMethodParameterAttributes(parentName: string, kind: ReflectionKind, accessorName: string, accessorType, data, currentItemName) {
-        if(!data) {
-            return;
-        }
+    public appendMethodParameterAttributes(parentName: string, kind: ReflectionKind, accessorName: string, accessorType, data) {
         const isCurrentExists = this.fileClassContent[parentName]["methods"][accessorName];
         if (!isCurrentExists) {
             this.fileClassContent[parentName]["methods"][accessorName] = {};
@@ -50,18 +55,14 @@ export class ClassFactory extends BaseFactory {
         if(!isParameterExists) {
             this.fileClassContent[parentName]["methods"][accessorName]["comment"]["parameters"] = {};
         }
-        const isExists = this.fileClassContent[parentName]["methods"][accessorName]["comment"]["parameters"][currentItemName];
+        const isExists = this.fileClassContent[parentName]["methods"][accessorName]["comment"]["parameters"][data["name"]];
         if (!isExists) {
-            this.fileClassContent[parentName]["methods"][accessorName]["comment"]["parameters"][currentItemName] = {};
+            this.fileClassContent[parentName]["methods"][accessorName]["comment"]["parameters"][data["name"]] = {};
         }
-        this.fileClassContent[parentName]["methods"][accessorName]["comment"]["parameters"][currentItemName] = data;
-        return;
+        this.fileClassContent[parentName]["methods"][accessorName]["comment"]["parameters"][data["name"]] = data["data"];
     }
 
     public appendConstructorParameterAttributes(parentName: string, kind: ReflectionKind, accessorName: string, accessorType, data) {
-        if(!data) {
-            return;
-        }
         const attributeKind = getAttributeType(kind);
         const currentName = accessorName;
         const isAttributeExists = this.fileClassContent[parentName]["methods"]["constructor"][attributeKind];
@@ -77,7 +78,6 @@ export class ClassFactory extends BaseFactory {
             this.fileClassContent[parentName]["methods"]["constructor"][attributeKind]["parameters"][currentName] = {};
         }
         this.fileClassContent[parentName]["methods"]["constructor"][attributeKind]["parameters"][currentName] = data;
-        return;
     }
 
     public isEmpty() {

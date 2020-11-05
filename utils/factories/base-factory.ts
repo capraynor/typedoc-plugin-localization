@@ -30,7 +30,7 @@ export abstract class BaseFactory {
             this.fileClassContent[parentName][attributeKind][Constants.STATIC_ATTRIBUTES_CATETORY_NAME] = this.fileClassContent[parentName][attributeKind][Constants.STATIC_ATTRIBUTES_CATETORY_NAME] || {};
             this.fileClassContent[parentName][attributeKind][Constants.STATIC_ATTRIBUTES_CATETORY_NAME][attributeName] = data;
         }else{
-
+            this.fileClassContent[parentName][attributeKind] = this.fileClassContent[parentName][attributeKind] || {};
             this.fileClassContent[parentName][attributeKind][attributeName] = data;
         }
 
@@ -38,10 +38,6 @@ export abstract class BaseFactory {
 
     
     public abstract appendAccessorAttributes(parentName, kind, accessorName, accessorType, data);
-
-    public abstract appendMethodParameterAttributes(parentName, kind, accessorName, accessorType, data, currentItemName);
-
-    public abstract appendConstructorParameterAttributes(parentName, kind, accessorName, accessorType, data);
 
     public isEmpty() {
         return !this.fileClassContent[this.name]['comment'];
