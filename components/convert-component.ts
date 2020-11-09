@@ -1,6 +1,6 @@
 import { Component, ConverterComponent } from 'typedoc/dist/lib/converter/components';
 import { Converter } from 'typedoc/dist/lib/converter';
-import { ReflectionKind, DeclarationReflection, ReflectionType } from 'typedoc/dist/lib/models';
+import { ReflectionKind, DeclarationReflection, ReflectionType, Reflection } from 'typedoc/dist/lib/models';
 import { FileOperations } from '../utils/file-operations';
 import { ClassFactory } from '../utils/factories/class-factory';
 import { BaseFactory } from '../utils/factories/base-factory';
@@ -22,8 +22,13 @@ export class ConvertComponent extends ConverterComponent {
     /**
      * Contains current name per every Class, Interface, Enum.
      */
-    jsonObjectName: string;
-    __debug: boolean;
+    private _jsonObjectName: string;
+    public get jsonObjectName(): string {
+        return this._jsonObjectName;
+    }
+    public set jsonObjectName(value: string) {
+        this._jsonObjectName = value;
+    }
     /**
      * Contains current Object instance.
      */
@@ -32,9 +37,6 @@ export class ConvertComponent extends ConverterComponent {
         return this._factoryInstance;
     }
     public set factoryInstance(value: BaseFactory) {
-        if(this.__debug) {
-            debugger;
-        }
         this._factoryInstance = value;
     }
     fileOperations: FileOperations;
@@ -64,6 +66,17 @@ export class ConvertComponent extends ConverterComponent {
 
         this.parser = new Parser();
         this.fileOperations = new FileOperations(this.application.logger);
+    }
+
+    
+    isReflectionHidden(reflection: Reflection){
+        do {
+            if (reflection?.comment?.hasTag("hidden")){
+                return true;
+            }
+        }while(!!(reflection = reflection.parent))
+
+        return false;
     }
 
     /**
@@ -139,9 +152,10 @@ export class ConvertComponent extends ConverterComponent {
      * @param reflection 
      */
     private resolve(context, reflection) {
-        if(reflection.name === 'fork') {
-            debugger;
+        if (this.isReflectionHidden(reflection)){
+            return;
         }
+
         switch(reflection.kind) {
             case ReflectionKind.Module:
                 const moduleData = this.getCommentInfo(reflection);
@@ -152,25 +166,12 @@ export class ConvertComponent extends ConverterComponent {
             case ReflectionKind.Class:
             case ReflectionKind.Interface:
             case ReflectionKind.TypeAlias: 
-            case ReflectionKind.TypeLiteral:
-                if(reflection.name === 'result') {
-                    this.__debug = true;
-                }
                 /**
                  * Writes file content when the resolve process for to Object ends 
                  * per(Class, Enum, Interface).
                  */
-                if (this.jsonObjectName !== reflection.name && this.jsonObjectName !== undefined) {
-                    if (!this.factoryInstance.isEmpty()) {
-                        const filePath = this.reflection.sources[0].fileName
-                        this.fileOperations.appendFileData(this.mainDirToExport, filePath, this.jsonObjectName, 'json', this.factoryInstance.getJsonContent());
-                    }
-                }
-                const data = this.getCommentInfo(reflection);
-                this.jsonObjectName = reflection.name;
-                this.reflection = reflection;
-                this.factoryInstance = this.instanceBuilder(reflection.kind, reflection.name);
-                this.factoryInstance.buildObjectStructure(data);
+
+                this.addNewJsonFile(reflection);
                 break;
             case ReflectionKind.Property:
             case ReflectionKind.CallSignature:
@@ -185,10 +186,7 @@ export class ConvertComponent extends ConverterComponent {
                     break;
                 }
 
-
-
-                const getData = this.getCommentInfo(reflection);
-                this.factoryInstance.appendAttribute(this.jsonObjectName, reflection.kind, reflection.name, getData, reflection.flags.isStatic);
+                this.appendToJSONFile(reflection);
                 break;
             case ReflectionKind.Function:
                     const funcData = this.getCommentInfo(reflection.signatures[0]);
@@ -236,6 +234,25 @@ export class ConvertComponent extends ConverterComponent {
             default:
                 return;
         }
+    }
+
+    private appendToJSONFile(reflection: any) {
+        const getData = this.getCommentInfo(reflection);
+        this.factoryInstance.appendAttribute(this.jsonObjectName, reflection.kind, reflection.name, getData, reflection.flags.isStatic);
+    }
+
+    private addNewJsonFile(reflection: any) {
+        if (this.jsonObjectName !== reflection.name && this.jsonObjectName !== undefined) {
+            if (!this.factoryInstance.isEmpty()) {
+                const filePath = this.reflection.sources[0].fileName;
+                this.fileOperations.appendFileData(this.mainDirToExport, filePath, this.jsonObjectName, 'json', this.factoryInstance.getJsonContent());
+            }
+        }
+        const data = this.getCommentInfo(reflection);
+        this.jsonObjectName = reflection.name;
+        this.reflection = reflection;
+        this.factoryInstance = this.instanceBuilder(reflection.kind, reflection.name);
+        this.factoryInstance.buildObjectStructure(data);
     }
 
     private prepareStorage(reflection){
