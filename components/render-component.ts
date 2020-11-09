@@ -65,6 +65,7 @@ export class RenderComponenet extends RendererComponent {
                 if (!this.globalFuncsData) {
                     break;
                 }
+
                 let moduleData = this.getGlobalComment(reflection) || {};
                 this.updateComment(reflection, moduleData);
                 break;
@@ -148,7 +149,7 @@ export class RenderComponenet extends RendererComponent {
         do{
             paths.unshift(ref.name);
             ref = ref.parent;
-        }while(ref.kind != ReflectionKind.Global);
+        }while(ref && ref.kind != ReflectionKind.Global);
         let p = paths.shift();
         let storage = this.globalFuncsData[p];
         while(storage && paths.length){

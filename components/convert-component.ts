@@ -257,15 +257,18 @@ export class ConvertComponent extends ConverterComponent {
 
     private prepareStorage(reflection){
         let paths = [];
+        let ref: Reflection;
         if (reflection.kind === ReflectionKind.Module){
-            paths.unshift(reflection.name);
+            ref = reflection
         }else{
-            let ref = reflection.parent;
-            do{
-                paths.unshift(ref.name);
-                ref = ref.parent;
-            }while(ref.kind != ReflectionKind.Global);
-        }      
+            ref = reflection.parent;
+        }
+        
+        do{
+            paths.unshift(ref.name);
+            ref = ref.parent;
+        }while(ref && ref.kind != ReflectionKind.Global);
+
         let obj = this.globalFuncsJson;
         paths.forEach(p => {
             if(!obj[p]){
