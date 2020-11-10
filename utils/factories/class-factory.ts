@@ -20,7 +20,7 @@ export class ClassFactory extends BaseFactory {
         this.fileClassContent[this.name][ACCESSORS_KEY] = {};
     }
 
-    public appendAccessorAttributes(parentName: string, kind: ReflectionKind, accessorName: string, accessorType, data) {
+    public appendParameters(parentName: string, kind: ReflectionKind, accessorName: string, accessorType, data) {
         if(!data) {
             return;
         }

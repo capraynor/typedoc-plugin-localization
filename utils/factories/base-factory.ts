@@ -20,7 +20,7 @@ export abstract class BaseFactory {
         }
     }
     
-    public appendAttribute(parentName, kind, attributeName, data, isStatic: boolean) {
+    public appendProperties(parentName, kind, attributeName, data, isStatic: boolean) {
         if (!data) {
             return;
         }        
@@ -37,7 +37,7 @@ export abstract class BaseFactory {
     }
 
     
-    public abstract appendAccessorAttributes(parentName, kind, accessorName, accessorType, data);
+    public abstract appendParameters(parentName, kind, accessorName, accessorType, data);
 
     public isEmpty() {
         return !this.fileClassContent[this.name]['comment'];

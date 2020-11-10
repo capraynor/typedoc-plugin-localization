@@ -171,7 +171,17 @@ export class ConvertComponent extends ConverterComponent {
                  * per(Class, Enum, Interface).
                  */
 
-                this.addNewJsonFile(reflection);
+                if (this.jsonObjectName !== reflection.name && this.jsonObjectName !== undefined) {
+                    if (!this.factoryInstance.isEmpty()) {
+                        const filePath = this.reflection.sources[0].fileName;
+                        this.fileOperations.appendFileData(this.mainDirToExport, filePath, this.jsonObjectName, 'json', this.factoryInstance.getJsonContent());
+                    }
+                }
+                const data = this.getCommentInfo(reflection);
+                this.jsonObjectName = reflection.name;
+                this.reflection = reflection;
+                this.factoryInstance = this.instanceBuilder(reflection.kind, reflection.name);
+                this.factoryInstance.buildObjectStructure(data);
                 break;
             case ReflectionKind.Property:
             case ReflectionKind.CallSignature:
@@ -186,7 +196,8 @@ export class ConvertComponent extends ConverterComponent {
                     break;
                 }
 
-                this.appendToJSONFile(reflection);
+                const getData = this.getCommentInfo(reflection);
+                this.factoryInstance.appendProperties(this.jsonObjectName, reflection.kind, reflection.name, getData, reflection.flags.isStatic);
                 break;
             case ReflectionKind.Function:
                     const funcData = this.getCommentInfo(reflection.signatures[0]);
@@ -213,14 +224,14 @@ export class ConvertComponent extends ConverterComponent {
             case ReflectionKind.Parameter:
                 if(reflection.parent.kind === ReflectionKind.ConstructorSignature) {
                     const data = this.getCommentInfo(reflection);
-                    this.factoryInstance.appendAccessorAttributes(this.jsonObjectName, reflection.parent.kind, reflection.name, reflection.type, data);
+                    this.factoryInstance.appendParameters(this.jsonObjectName, reflection.parent.kind, reflection.name, reflection.type, data);
                 }
                 if(reflection.parent.kind === ReflectionKind.CallSignature) {
                     const accessorName = reflection.parent.name;
                     const accessorType = reflection.parent.kind;
                     const accessorData = this.getCommentInfo(reflection);
                     const accessorDataWithName = {"name":reflection.name,"data":accessorData};
-                    this.factoryInstance.appendAccessorAttributes(this.jsonObjectName, reflection.parent.kind, accessorName, accessorType, accessorDataWithName);
+                    this.factoryInstance.appendParameters(this.jsonObjectName, reflection.parent.kind, accessorName, accessorType, accessorDataWithName);
                 }
                 break;
             case ReflectionKind.Accessor:
@@ -230,29 +241,10 @@ export class ConvertComponent extends ConverterComponent {
                 const accessorName = reflection.parent.name;
                 const accessorType = reflection.kind;
                 const accessorData = this.getCommentInfo(reflection);
-                this.factoryInstance.appendAccessorAttributes(this.jsonObjectName, reflection.parent.kind, accessorName, accessorType, accessorData);
+                this.factoryInstance.appendParameters(this.jsonObjectName, reflection.parent.kind, accessorName, accessorType, accessorData);
             default:
                 return;
         }
-    }
-
-    private appendToJSONFile(reflection: any) {
-        const getData = this.getCommentInfo(reflection);
-        this.factoryInstance.appendAttribute(this.jsonObjectName, reflection.kind, reflection.name, getData, reflection.flags.isStatic);
-    }
-
-    private addNewJsonFile(reflection: any) {
-        if (this.jsonObjectName !== reflection.name && this.jsonObjectName !== undefined) {
-            if (!this.factoryInstance.isEmpty()) {
-                const filePath = this.reflection.sources[0].fileName;
-                this.fileOperations.appendFileData(this.mainDirToExport, filePath, this.jsonObjectName, 'json', this.factoryInstance.getJsonContent());
-            }
-        }
-        const data = this.getCommentInfo(reflection);
-        this.jsonObjectName = reflection.name;
-        this.reflection = reflection;
-        this.factoryInstance = this.instanceBuilder(reflection.kind, reflection.name);
-        this.factoryInstance.buildObjectStructure(data);
     }
 
     private prepareStorage(reflection){

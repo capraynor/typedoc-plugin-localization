@@ -21,5 +21,5 @@ export class InterfaceFactory extends BaseFactory {
         !Object.keys(this.fileClassContent[this.name][PROPERTIES_KEY]).length &&
         !Object.keys(this.fileClassContent[this.name][METHODS_KEY]).length;
     }
-    public appendAccessorAttributes(parentName: any, kind: any, accessorName: any, accessorType: any, data: any) { }
+    public appendParameters(parentName: any, kind: any, accessorName: any, accessorType: any, data: any) { }
 }

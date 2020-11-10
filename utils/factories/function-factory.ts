@@ -6,7 +6,7 @@ export class FunctionFactory extends BaseFactory {
         super(name);
     }
 
-    public appendAttribute(parentName, kind, attributeName, data) { }
+    public appendProperties(parentName, kind, attributeName, data) { }
 
-    public appendAccessorAttributes(parentName: any, kind: any, accessorName: any, accessorType: any, data: any) { }
+    public appendParameters(parentName: any, kind: any, accessorName: any, accessorType: any, data: any) { }
 }
