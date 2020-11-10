@@ -34,6 +34,10 @@ export class ClassFactory extends BaseFactory {
             this.appendMethodParameterAttributes(parentName,kind,accessorName,accessorType,data);
             return;
         }
+        this.appendAccessor(parentName, attributeKind, accessorName, accessorTypeAsString, data);
+    }
+
+    private appendAccessor(parentName: string, attributeKind: string, accessorName: string, accessorTypeAsString: string, data: any) {
         this.fileClassContent[parentName][attributeKind] = this.fileClassContent[parentName][attributeKind] || {};
         const isAccessorExists = this.fileClassContent[parentName][attributeKind][accessorName];
         if (!isAccessorExists || typeof isAccessorExists == 'function') {
