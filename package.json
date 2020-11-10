@@ -1,6 +1,6 @@
 {
     "name": "typedoc-plugin-localization2",
-    "version": "2.0.6",
+    "version": "2.0.7",
     "description": "Typedoc plugin which localize your documentation",
     "author": "Infragistics",
     "license": "MIT",
@@ -11,7 +11,7 @@
     "scripts": {
         "build": "tsc",
         "dev": "tsc -w -p tsconfig.dev.json",
-        "pub": "node scripts/publish.js"
+        "pub": "npm run build && node scripts/publish.js"
     },
     "repository": {
         "type": "git",
