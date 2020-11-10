@@ -1,5 +1,6 @@
 import { getAttributeType } from "../enums/json-keys";
 import { Constants } from "../constants";
+import { ReflectionKind } from "typedoc";
 
 export abstract class BaseFactory {
     public name;
@@ -26,6 +27,7 @@ export abstract class BaseFactory {
         }        
         const attributeKind = getAttributeType(kind);
 
+
         if (isStatic){
             this.fileClassContent[parentName][attributeKind][Constants.STATIC_ATTRIBUTES_CATETORY_NAME] = this.fileClassContent[parentName][attributeKind][Constants.STATIC_ATTRIBUTES_CATETORY_NAME] || {};
             this.fileClassContent[parentName][attributeKind][Constants.STATIC_ATTRIBUTES_CATETORY_NAME][attributeName] = data;
@@ -37,7 +39,7 @@ export abstract class BaseFactory {
     }
 
     
-    public abstract appendParameters(parentName, kind, accessorName, accessorType, data);
+    public abstract appendAccessor(parentName, kind: ReflectionKind, accessorName: string, accessorType: ReflectionKind, data);
 
     public isEmpty() {
         return !this.fileClassContent[this.name]['comment'];

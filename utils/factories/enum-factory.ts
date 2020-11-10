@@ -20,5 +20,5 @@ export class EnumFactory extends BaseFactory {
         !Object.keys(this.fileClassContent[this.name][ENUM_MEMBER_KEY]).length;
     }    
     
-    public appendParameters(parentName: any, kind: any, accessorName: any, accessorType: any, data: any) { }
+    public appendAccessor(parentName: any, kind: any, accessorName: any, accessorType: any, data: any) { }
 }

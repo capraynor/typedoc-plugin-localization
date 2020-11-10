@@ -234,18 +234,6 @@ export class RenderComponenet extends RendererComponent {
             });
         }
 
-        if (reflection.parameters && dataObj[Constants.PARAMS]) {
-            reflection.parameters.forEach(param => {
-                const paramFromJson = dataObj[Constants.PARAMS][param.name];
-                if (paramFromJson) {
-                    param.comment.text = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].text, '\n');
-                    param.comment.shortText = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].shortText, '\n');
-                    param.comment.returns = this.parser.joinByCharacter(paramFromJson[Constants.COMMENT].return, '\n');
-                    return param;
-                }
-            });
-        }
-
         if (GlobalFuncs.isSupportedTypeAliasReflection(reflection)){
             this.updateTypeLiteralComment(reflection, dataObj)
         }

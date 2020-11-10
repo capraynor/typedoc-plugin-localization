@@ -8,5 +8,5 @@ export class VariableFactory extends BaseFactory {
 
     public appendProperties(parentName, kind, attributeName, data) { }
 
-    public appendParameters(parentName: any, kind: any, accessorName: any, accessorType: any, data: any) { }
+    public appendAccessor(parentName: any, kind: any, accessorName: any, accessorType: any, data: any) { }
 }
