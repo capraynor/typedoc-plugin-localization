@@ -270,7 +270,7 @@ export class ConvertComponent extends ConverterComponent {
 
         let comment = this.getCommentData(reflection.comment);
 
-        if (options[Constants.INCLUDE_TAGS_OPTION] && reflection.comment.tags) {
+        if (options[Constants.INCLUDE_TAGS_OPTION] && reflection.comment.tags?.length) {
             comment[Constants.COMMENT] = Object.assign(this.getTagsComments(reflection.comment), comment[Constants.COMMENT]);            
         }
 
